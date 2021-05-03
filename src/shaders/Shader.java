@@ -16,7 +16,13 @@ public abstract class Shader {
         program = glCreateProgram();
         glAttachShader(program, vertexShader);
         glAttachShader(program, fragmentShader);
+        glLinkProgram(program);
         glValidateProgram(program);
+        if (glGetProgrami(program, GL_LINK_STATUS) == GL_FALSE) {
+            System.out.println(glGetProgramInfoLog(program, 512));
+            System.err.println("Could not link program");
+            System.exit(-1);
+        }
         bindAttributes();
     }
 
@@ -63,7 +69,6 @@ public abstract class Shader {
 
         glShaderSource(shader, source);
         glCompileShader(shader);
-
         if (glGetShaderi(shader, GL_COMPILE_STATUS) == GL_FALSE) {
             System.out.println(glGetShaderInfoLog(shader, 512));
             System.err.println("Could not compile shader");
