@@ -2,13 +2,15 @@ import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
+import shaders.Shader;
+import shaders.StaticShader;
 
 import java.nio.*;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL33.*;
 import static org.lwjgl.system.MemoryStack.*;
 import static org.lwjgl.system.MemoryUtil.*;
 
@@ -40,6 +42,9 @@ public class Window {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         window = glfwCreateWindow(WIDTH, HEIGHT, "Mood", NULL, NULL);
         if ( window == NULL )
@@ -94,7 +99,9 @@ public class Window {
                 -0.5f, 0.5f, 0f,
         });
 
-        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        Shader shader = new StaticShader();
+
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         while ( !glfwWindowShouldClose(window) ) {
             // Clear buffer
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -103,12 +110,15 @@ public class Window {
             glfwPollEvents();
 
             // Render
+            shader.start();
             model.render();
+            shader.stop();
 
             // Swap buffers
             glfwSwapBuffers(window);
         }
 
+        shader.delete();
         model.delete();
     }
 
