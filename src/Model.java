@@ -3,6 +3,7 @@ import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 
 /**
@@ -10,7 +11,8 @@ import java.nio.FloatBuffer;
  */
 public class Model {
     private final int vaoId;
-    private final int vboId;
+    private final int vboIdVertices;
+    private final int vboIdIndices;
     private final int vertexCount;
 
     /**
@@ -18,12 +20,20 @@ public class Model {
      * @param positions The positions of the vertices in the model
      * @return The model loaded from the positions
      */
-    public static Model fromPositions(float[] positions) {
+    public static Model fromPositions(float[] positions, int[] indices) {
         int vaoId = glGenVertexArrays();
         glBindVertexArray(vaoId);
-        int vboId = storeDataInAttributeList(0, positions);
+
+        int vboIdIndices = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboIdIndices);
+        IntBuffer buffer = BufferUtils.createIntBuffer(indices.length);
+        buffer.put(indices);
+        buffer.flip();
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+
+        int vboIdVertices = storeDataInAttributeList(0, positions);
         glBindVertexArray(0);
-        return new Model(vaoId, vboId, positions.length / 3);
+        return new Model(vaoId, vboIdVertices, vboIdIndices, indices.length);
     }
 
     /**
@@ -46,33 +56,37 @@ public class Model {
         return vboId;
     }
 
-    private Model(int vaoId, int vboId, int vertexCount) {
+//    private IntBuffer createIntBuffer(int[] data) {
+//        IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
+//        buffer.put(data);
+//        buffer.flip();
+//        return buffer;
+//    }
+
+//    private FloatBuffer createFloatBuffer(float[] data) {
+//        FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
+//        buffer.put(data);
+//        buffer.flip();
+//        return buffer;
+//    }
+
+    private Model(int vaoId, int vboIdVertices, int vboIdIndices, int vertexCount) {
         this.vaoId = vaoId;
-        this.vboId = vboId;
+        this.vboIdVertices = vboIdVertices;
+        this.vboIdIndices = vboIdIndices;
         this.vertexCount = vertexCount;
     }
 
     public void delete() {
-        glDeleteVertexArrays(this.getVaoId());
-        glDeleteBuffers(this.getVboId());
-    }
-
-    public int getVboId() {
-        return this.vboId;
-    }
-
-    public int getVaoId() {
-        return this.vaoId;
-    }
-
-    public int getVertexCount() {
-        return this.vertexCount;
+        glDeleteVertexArrays(this.vaoId);
+        glDeleteBuffers(vboIdVertices);
+        glDeleteBuffers(vboIdIndices);
     }
 
     public void render() {
-        glBindVertexArray(this.getVaoId());
+        glBindVertexArray(this.vaoId);
         glEnableVertexAttribArray(0);
-        glDrawArrays(GL_TRIANGLES, 0, this.vertexCount);
+        glDrawElements(GL_TRIANGLES, this.vertexCount, GL_UNSIGNED_INT, 0);
         glDisableVertexAttribArray(0);
         glBindVertexArray(0);
     }

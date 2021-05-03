@@ -84,17 +84,18 @@ public class Window {
         GL.createCapabilities();
 
         Model model = Model.fromPositions(new float[]{
-                // first triangle
                 -0.5f, 0.5f, 0f,
                 -0.5f, -0.5f, 0f,
                 0.5f, -0.5f, 0f,
-                // second triangle
-                0.5f, -0.5f, 0f,
                 0.5f, 0.5f, 0f,
-                -0.5f, 0.5f, 0f,
+        }, new int[]{
+                0, 1, 3,
+                3, 1, 2
         });
 
-        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+        // Uncomment for wireframe
+        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         while ( !glfwWindowShouldClose(window) ) {
             // Clear buffer
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
