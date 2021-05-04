@@ -29,7 +29,7 @@ public class Model {
         buffer.flip();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
 
-        int vboIdVertices = storeDataInAttributeList(0, positions);
+        int vboIdVertices = storeFloatDataInAttributeList(0, positions);
         glBindVertexArray(0);
         return new Model(vaoId, vboIdVertices, vboIdIndices, indices.length);
     }
@@ -40,7 +40,7 @@ public class Model {
      * @param data The data to insert
      * @return The id of the VBO containing the data
      */
-    private static int storeDataInAttributeList(int attributeIndex, float[] data) {
+    private static int storeFloatDataInAttributeList(int attributeIndex, float[] data) {
         int vboId = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
 
@@ -53,20 +53,6 @@ public class Model {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         return vboId;
     }
-
-//    private IntBuffer createIntBuffer(int[] data) {
-//        IntBuffer buffer = BufferUtils.createIntBuffer(data.length);
-//        buffer.put(data);
-//        buffer.flip();
-//        return buffer;
-//    }
-
-//    private FloatBuffer createFloatBuffer(float[] data) {
-//        FloatBuffer buffer = BufferUtils.createFloatBuffer(data.length);
-//        buffer.put(data);
-//        buffer.flip();
-//        return buffer;
-//    }
 
     private Model(int vaoId, int vboIdVertices, int vboIdIndices, int vertexCount) {
         this.vaoId = vaoId;
