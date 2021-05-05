@@ -1,9 +1,12 @@
+import models.Model;
+import models.TexturedModel;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import shaders.Shader;
 import shaders.StaticShader;
+import textures.Texture;
 
 import java.nio.*;
 import java.util.Objects;
@@ -88,15 +91,21 @@ public class Window {
     private void loop() {
         GL.createCapabilities();
 
-        Model model = Model.fromPositions(new float[]{
+        Texture texture = new Texture("res/texture02.png", GL_MIRRORED_REPEAT, GL_NEAREST);
+        Model texturedModel = new TexturedModel(new float[]{
                 -0.5f, 0.5f, 0f,
                 -0.5f, -0.5f, 0f,
                 0.5f, -0.5f, 0f,
                 0.5f, 0.5f, 0f,
         }, new int[]{
                 0, 1, 3,
-                3, 1, 2
-        });
+                3, 1, 2,
+        }, new float[]{
+                0, 0,
+                0, 1,
+                1, 1,
+                1, 0,
+        }, texture);
 
         Shader shader = new StaticShader();
 
@@ -112,15 +121,16 @@ public class Window {
 
             // Render
             shader.start();
-            model.render();
+            texturedModel.render();
             shader.stop();
 
             // Swap buffers
             glfwSwapBuffers(window);
         }
 
+        texturedModel.delete();
+        texture.delete();
         shader.delete();
-        model.delete();
     }
 
     public static void main(String[] args) {

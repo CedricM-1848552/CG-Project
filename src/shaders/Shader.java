@@ -14,6 +14,7 @@ public abstract class Shader {
         vertexShader = loadShader(vertexFile, GL_VERTEX_SHADER);
         fragmentShader = loadShader(fragmentFile, GL_FRAGMENT_SHADER);
         program = glCreateProgram();
+        bindAttributes();
         glAttachShader(program, vertexShader);
         glAttachShader(program, fragmentShader);
         glLinkProgram(program);
@@ -23,7 +24,6 @@ public abstract class Shader {
             System.err.println("Could not link program");
             System.exit(-1);
         }
-        bindAttributes();
     }
 
     public void start() {
