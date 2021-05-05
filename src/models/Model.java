@@ -72,12 +72,20 @@ public class Model {
         glDeleteBuffers(vboIndices);
     }
 
-    public void render() {
+    public final void render() {
         bind();
-        glEnableVertexAttribArray(0);
+        preRender();
         glDrawElements(GL_TRIANGLES, this.getVertexCount(), GL_UNSIGNED_INT, 0);
-        glDisableVertexAttribArray(0);
+        postRender();
         unbind();
+    }
+
+    protected void preRender() {
+        glEnableVertexAttribArray(0);
+    }
+
+    protected void postRender() {
+        glDisableVertexAttribArray(0);
     }
 
     protected int getVertexCount() {

@@ -1,10 +1,14 @@
+package window;
+
+import enitities.Camera;
+import enitities.Entity;
 import models.Model;
 import models.TexturedModel;
+import org.joml.Vector3f;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
-import shaders.Shader;
 import shaders.StaticShader;
 import textures.Texture;
 
@@ -53,10 +57,7 @@ public class Window {
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
 
-        glfwSetKeyCallback(window, (long window, int key, int scancode, int action, int mods) -> {
-            if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
-                glfwSetWindowShouldClose(window, true);
-        });
+        glfwSetKeyCallback(window, Keyboard.get());
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
@@ -91,44 +92,101 @@ public class Window {
     private void loop() {
         GL.createCapabilities();
 
-        Texture texture = new Texture("res/texture02.png", GL_MIRRORED_REPEAT, GL_NEAREST);
-        Model texturedModel = new TexturedModel(new float[]{
-                -0.5f, 0.5f, 0f,
-                -0.5f, -0.5f, 0f,
-                0.5f, -0.5f, 0f,
-                0.5f, 0.5f, 0f,
+        var texture = new Texture("res/texture02.png", GL_MIRRORED_REPEAT, GL_NEAREST);
+        var model = new TexturedModel(new float[]{
+                -0.5f,0.5f,0,
+                -0.5f,-0.5f,0,
+                0.5f,-0.5f,0,
+                0.5f,0.5f,0,
+                -0.5f,0.5f,1,
+                -0.5f,-0.5f,1,
+                0.5f,-0.5f,1,
+                0.5f,0.5f,1,
+                0.5f,0.5f,0,
+                0.5f,-0.5f,0,
+                0.5f,-0.5f,1,
+                0.5f,0.5f,1,
+                -0.5f,0.5f,0,
+                -0.5f,-0.5f,0,
+                -0.5f,-0.5f,1,
+                -0.5f,0.5f,1,
+                -0.5f,0.5f,1,
+                -0.5f,0.5f,0,
+                0.5f,0.5f,0,
+                0.5f,0.5f,1,
+                -0.5f,-0.5f,1,
+                -0.5f,-0.5f,0,
+                0.5f,-0.5f,0,
+                0.5f,-0.5f,1
         }, new int[]{
-                0, 1, 3,
-                3, 1, 2,
+                0,1,3,
+                3,1,2,
+                4,5,7,
+                7,5,6,
+                8,9,11,
+                11,9,10,
+                12,13,15,
+                15,13,14,
+                16,17,19,
+                19,17,18,
+                20,21,23,
+                23,21,22
         }, new float[]{
-                0, 0,
-                0, 1,
-                1, 1,
-                1, 0,
+                0,0,
+                0,1,
+                1,1,
+                1,0,
+                0,0,
+                0,1,
+                1,1,
+                1,0,
+                0,0,
+                0,1,
+                1,1,
+                1,0,
+                0,0,
+                0,1,
+                1,1,
+                1,0,
+                0,0,
+                0,1,
+                1,1,
+                1,0,
+                0,0,
+                0,1,
+                1,1,
+                1,0
         }, texture);
 
-        Shader shader = new StaticShader();
+        var entity = new Entity(model, new Vector3f(0, 0, -1), new Vector3f(0, 0, 0), 1);
+
+        var shader = new StaticShader();
+
+        var camera = new Camera();
 
         // Uncomment for wireframe
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glEnable(GL_DEPTH_TEST);
         while ( !glfwWindowShouldClose(window) ) {
             // Clear buffer
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Update
             glfwPollEvents();
+            camera.move();
 
             // Render
             shader.start();
-            texturedModel.render();
+            shader.loadViewMatrix(camera);
+            entity.render(shader);
             shader.stop();
 
             // Swap buffers
             glfwSwapBuffers(window);
         }
 
-        texturedModel.delete();
+        model.delete();
         texture.delete();
         shader.delete();
     }

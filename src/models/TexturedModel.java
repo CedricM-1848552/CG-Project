@@ -15,16 +15,18 @@ public class TexturedModel extends Model {
         this.unbind();
     }
 
-    public void render() {
-        bind();
-        glEnableVertexAttribArray(0);
+    @Override
+    protected void preRender() {
+        super.preRender();
         glEnableVertexAttribArray(1);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, this.texture.getId());
-        glDrawElements(GL_TRIANGLES, this.getVertexCount(), GL_UNSIGNED_INT, 0);
-        glDisableVertexAttribArray(0);
+    }
+
+    @Override
+    protected void postRender() {
         glDisableVertexAttribArray(1);
-        unbind();
+        super.postRender();
     }
 
     /**
