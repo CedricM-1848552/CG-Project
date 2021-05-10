@@ -1,6 +1,7 @@
 package shaders;
 
 import enitities.Camera;
+import enitities.Light;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import window.Window;
@@ -16,6 +17,8 @@ public class StaticShader extends Shader {
     private int location_transformationMatrix;
     private int location_projectionMatrix;
     private int location_viewMatrix;
+    private int location_lightPosition;
+    private int location_lightColour;
 
     public StaticShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -60,6 +63,7 @@ public class StaticShader extends Shader {
     protected void bindAttributes() {
         super.bindAttribute(0, "position");
         super.bindAttribute(1, "textureCoordinates");
+        super.bindAttribute(2, "normal");
     }
 
     @Override
@@ -67,6 +71,8 @@ public class StaticShader extends Shader {
         this.location_transformationMatrix = super.getUniformLocation("transformationMatrix");
         this.location_projectionMatrix = super.getUniformLocation("projectionMatrix");
         this.location_viewMatrix =super.getUniformLocation("viewMatrix");
+        this.location_lightPosition =super.getUniformLocation("lightPosition");
+        this.location_lightColour =super.getUniformLocation("lightColour");
     }
 
     public void loadTransformationMatrix(Matrix4f transformation) {
@@ -80,5 +86,10 @@ public class StaticShader extends Shader {
     public void loadViewMatrix(Camera camera) {
         var view = createViewMatrix(camera);
         loadMatrix(this.location_viewMatrix, view);
+    }
+
+    public void loadLight(Light light) {
+        super.loadVector(this.location_lightPosition, light.getPosition());
+        super.loadVector(this.location_lightColour, light.getColour());
     }
 }

@@ -2,6 +2,7 @@ package window;
 
 import enitities.Camera;
 import enitities.Entity;
+import enitities.Light;
 import models.Model;
 import models.TexturedModel;
 import org.joml.Vector3f;
@@ -95,7 +96,8 @@ public class Window {
         var texture = new Texture("res/textures/stallTexture.png", GL_MIRRORED_REPEAT, GL_NEAREST);
         var model = TexturedModel.fromObjFile("res/models/stall.obj", texture);
 
-        var entity = new Entity(model, new Vector3f(0, 0, -25), new Vector3f(0, 180, 0), 1);
+        var entity = new Entity(model, new Vector3f(0, -10, -25), new Vector3f(0, 180, 0), 1);
+        var light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
 
         var shader = new StaticShader();
 
@@ -116,6 +118,7 @@ public class Window {
             // Render
             shader.start();
             shader.loadViewMatrix(camera);
+            shader.loadLight(light);
             entity.render(shader);
             shader.stop();
 

@@ -16,11 +16,12 @@ import static org.lwjgl.opengl.GL33.*;
 public class TexturedModel extends Model {
     private final Texture texture;
 
-    public TexturedModel(float[] coordinates, int[] indices, float[] textureCoordinates, Texture texture) {
+    public TexturedModel(float[] coordinates, int[] indices, float[] textureCoordinates, float[] normals, Texture texture) {
         super(coordinates, indices);
         this.texture = texture;
         this.bind();
         storeDataInAttributeList(1, 2, textureCoordinates);
+        storeDataInAttributeList(2, 3, normals);
         this.unbind();
     }
 
@@ -113,7 +114,7 @@ public class TexturedModel extends Model {
             indicesArray[i] = indices.get(i);
         }
 
-        return new TexturedModel(verticesArray, indicesArray, textureArray, texture);
+        return new TexturedModel(verticesArray, indicesArray, textureArray, normalsArray, texture);
     }
 
     private static void processVertex(String[] vertexData, List<Integer> indices, List<Vector2f> textures, List<Vector3f> normals, float[] textureArray, float[] normalsArray) {
@@ -134,6 +135,7 @@ public class TexturedModel extends Model {
     protected void preRender() {
         super.preRender();
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, this.texture.getId());
     }
@@ -141,6 +143,7 @@ public class TexturedModel extends Model {
     @Override
     protected void postRender() {
         glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
         super.postRender();
     }
 
