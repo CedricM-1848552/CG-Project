@@ -97,6 +97,10 @@ public abstract class Shader {
         glUniform1f(location, floatval);
     }
 
+    public void setFloat(String name, int value) {
+        glUniform1f(glGetUniformLocation(program, name), value);
+    }
+
     protected void loadMatrix(int location, Matrix4f matrix) {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(16);
         matrix.get(buffer);

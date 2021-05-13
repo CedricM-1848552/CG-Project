@@ -2,7 +2,6 @@ package window;
 
 import org.lwjgl.glfw.GLFWKeyCallbackI;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
