@@ -6,7 +6,11 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import window.Window;
 
+import java.util.List;
+
 public class StaticShader extends Shader {
+    private static final int MAX_LIGHTS = 2;
+
     private static final String VERTEX_FILE = "shaders/vertexShader.vert";
     private static final String FRAGMENT_FILE = "shaders/fragmentShader.frag";
 
@@ -17,8 +21,8 @@ public class StaticShader extends Shader {
     private int location_transformationMatrix;
     private int location_projectionMatrix;
     private int location_viewMatrix;
-    private int location_lightPosition;
-    private int location_lightColour;
+    private int[] location_lightPosition;
+    private int[] location_lightColour;
 
     public StaticShader() {
         super(VERTEX_FILE, FRAGMENT_FILE);
@@ -71,8 +75,13 @@ public class StaticShader extends Shader {
         this.location_transformationMatrix = super.getUniformLocation("transformationMatrix");
         this.location_projectionMatrix = super.getUniformLocation("projectionMatrix");
         this.location_viewMatrix =super.getUniformLocation("viewMatrix");
-        this.location_lightPosition =super.getUniformLocation("lightPosition");
-        this.location_lightColour =super.getUniformLocation("lightColour");
+
+        location_lightPosition = new int[MAX_LIGHTS];
+        location_lightColour = new int[MAX_LIGHTS];
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            location_lightPosition[i] = super.getUniformLocation("lightPosition[" + i + "]");
+            location_lightColour[i] = super.getUniformLocation("lightColour[" + i + "]");
+        }
     }
 
     public void loadTransformationMatrix(Matrix4f transformation) {
@@ -88,8 +97,15 @@ public class StaticShader extends Shader {
         loadMatrix(this.location_viewMatrix, view);
     }
 
-    public void loadLight(Light light) {
-        super.loadVector(this.location_lightPosition, light.getPosition());
-        super.loadVector(this.location_lightColour, light.getColour());
+    public void loadLights(List<Light> lights) {
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            if (i < lights.size()) {
+                super.loadVector(location_lightPosition[i], lights.get(i).getPosition());
+                super.loadVector(location_lightColour[i], lights.get(i).getColour());
+            } else {
+                super.loadVector(location_lightPosition[i], new Vector3f(0, 0, 0));
+                super.loadVector(location_lightColour[i], new Vector3f(0, 0, 0));
+            }
+        }
     }
 }

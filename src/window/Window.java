@@ -3,7 +3,6 @@ package window;
 import enitities.Camera;
 import enitities.Entity;
 import enitities.Light;
-import models.Model;
 import models.TexturedModel;
 import org.joml.Vector3f;
 import org.lwjgl.*;
@@ -14,6 +13,8 @@ import shaders.StaticShader;
 import textures.Texture;
 
 import java.nio.*;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -97,7 +98,8 @@ public class Window {
         var model = TexturedModel.fromObjFile("res/models/stall.obj", texture);
 
         var entity = new Entity(model, new Vector3f(0, -10, -25), new Vector3f(0, 180, 0), 1);
-        var light = new Light(new Vector3f(0, 0, -20), new Vector3f(1, 1, 1));
+        var light1 = new Light(new Vector3f(0, 100, 0), new Vector3f(1, 1, 1));
+        var light2 = new Light(new Vector3f(0, 0, -20), new Vector3f(0, 1, 0));
 
         var shader = new StaticShader();
 
@@ -105,8 +107,10 @@ public class Window {
 
         // Uncomment for wireframe
         // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClearColor(0.3f, 0.4f, 0.7f, 1.0f);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
         while ( !glfwWindowShouldClose(window) ) {
             // Clear buffer
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -118,7 +122,7 @@ public class Window {
             // Render
             shader.start();
             shader.loadViewMatrix(camera);
-            shader.loadLight(light);
+            shader.loadLights(Arrays.asList(light1, light2));
             entity.render(shader);
             shader.stop();
 
