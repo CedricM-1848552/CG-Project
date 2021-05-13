@@ -29,10 +29,14 @@ public class Keyboard implements GLFWKeyCallbackI {
         return instance;
     }
 
+    public void update() {
+        this.releasedKeys.clear();
+        glfwPollEvents();
+    }
+
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods) {
         this.activeMods = mods;
-        releasedKeys.clear();
         if (action == GLFW_PRESS) {
             pressedKeys.add(key);
         } else if (action == GLFW_RELEASE) {

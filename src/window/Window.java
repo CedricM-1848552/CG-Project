@@ -104,9 +104,8 @@ public class Window {
         var shader = new StaticShader();
 
         var camera = new Camera();
+        var showingWireframe = false;
 
-        // Uncomment for wireframe
-        // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glClearColor(0.3f, 0.4f, 0.7f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_CULL_FACE);
@@ -116,8 +115,19 @@ public class Window {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Update
-            glfwPollEvents();
+            Keyboard.get().update();
             camera.move();
+
+            // Toggle wireframe mode
+            if (Keyboard.get().isKeyReleased(GLFW_KEY_F)) {
+                showingWireframe = !showingWireframe;
+
+                if (showingWireframe) {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                } else {
+                    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                }
+            }
 
             // Render
             shader.start();
