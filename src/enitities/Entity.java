@@ -56,6 +56,6 @@ public class Entity {
     public void render(StaticShader shader) {
         var transformation = createTransformationMatrix();
         shader.loadTransformationMatrix(transformation);
-        this.model.render();
+        this.model.render(shader);
     }
 }

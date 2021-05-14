@@ -68,9 +68,10 @@ public class Texture {
 
         if (data != null) {
             int format = 0;
-            if (numComponents.get(0) == 1) {
+            if (numComponents.get(0) == 1)
                 format = GL_RED;
-            }
+            else if (numComponents.get(0) == 2)
+                format = GL_RG;
             else if (numComponents.get(0) == 3)
                 format = GL_RGB;
             else if (numComponents.get(0) == 4)
@@ -84,13 +85,11 @@ public class Texture {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-            stbi_image_free(data);
         }
         else {
             System.out.println("Failed to load texture at path: " + path);
-            stbi_image_free(data);
         }
+        stbi_image_free(data);
     }
 
     public void delete() {

@@ -44,13 +44,13 @@ public class Mesh {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, intBuffer, GL_STATIC_DRAW);
 
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 32, 0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, Vertex.SIZE, 0);
 
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 32, 12);     // 3 * 4 bytes
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, Vertex.SIZE, Vertex.NORMALS_OFFSET);
 
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, false, 32, 24);     // 6 * 4 bytes
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, Vertex.SIZE, Vertex.TEXTURE_OFFSET);
 
         glBindVertexArray(0);
     }
@@ -73,5 +73,6 @@ public class Mesh {
         glActiveTexture(GL_TEXTURE0);
         glBindVertexArray(vao);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
     }
 }

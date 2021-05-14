@@ -1,8 +1,8 @@
 #version 330 core
 
 in vec3 position;
-in vec2 textureCoordinates;
 in vec3 normal;
+in vec2 textureCoordinates;
 
 out vec2 pass_textureCoordinates;
 out vec3 surfaceNormal;

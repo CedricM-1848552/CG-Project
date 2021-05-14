@@ -5,6 +5,9 @@ import org.joml.Vector3f;
 
 public class Vertex {
     public static final int NUM_FLOATS = 8;
+    public static final int SIZE = NUM_FLOATS * Float.BYTES;
+    public static final int NORMALS_OFFSET = 12;                // 3 * 4 bytes
+    public static final int TEXTURE_OFFSET = 24;                // 6 * 4 bytes
 
     private Vector3f coordinates;
     private Vector3f normal;

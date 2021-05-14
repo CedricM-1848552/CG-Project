@@ -146,10 +146,9 @@ public class Model {
             Vector3f normal = new Vector3f(mesh.mNormals().get(i).x(), mesh.mNormals().get(i).y(), mesh.mNormals().get(i).z());
             Vector2f texture;
 
-            AITexture.create(0);
-            if (mesh.mTextureCoords(0) != null) {
+//            AITexture.create(0);
+            if (mesh.mTextureCoords(0) != null)
                 texture = new Vector2f(mesh.mTextureCoords(0).get(i).x(), mesh.mTextureCoords(0).get(i).y());
-            }
             else
                 texture = new Vector2f(0, 0);
 

@@ -3,6 +3,7 @@ package window;
 import enitities.Camera;
 import enitities.Entity;
 import enitities.Light;
+import models.Model;
 import models.TexturedModel;
 import org.joml.Vector3f;
 import org.lwjgl.*;
@@ -94,8 +95,11 @@ public class Window {
     private void loop() {
         GL.createCapabilities();
 
-        var texture = new Texture("res/textures/stallTexture.png", GL_MIRRORED_REPEAT, GL_NEAREST);
-        var model = TexturedModel.fromObjFile("res/models/stall.obj", texture);
+//        var texture = new Texture("res/textures/stallTexture.png", GL_MIRRORED_REPEAT, GL_NEAREST);
+//        var model = new Model("C:/Users/grisp/IdeaProjects/CG-Project/res/mes/OBJ/Kitchenknife_lowpoly.obj");
+        var model = new Model("C:/Users/grisp/IdeaProjects/CG-Project/res/backpack/backpack.obj");
+//        var model = new Model("C:/Users/grisp/IdeaProjects/CG-Project/res/Mandalorian.obj");
+//        var model = new Model("C:/Users/grisp/IdeaProjects/CG-Project/res/gun/Handgun_obj.obj");
 
         var entity = new Entity(model, new Vector3f(0, -10, -25), new Vector3f(0, 180, 0), 1);
         var light1 = new Light(new Vector3f(0, 5, 0), new Vector3f(1, 1, 1), new Vector3f(1, 0.01f, 0.002f));
@@ -104,6 +108,17 @@ public class Window {
         var shader = new StaticShader();
 
         var camera = new Camera();
+
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        if (glfwRawMouseMotionSupported())
+            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        glfwSetCursorPosCallback(window, new GLFWCursorPosCallbackI() {
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                camera.changeDirection(xpos, ypos);
+            }
+        });
+
         var showingWireframe = false;
 
         glClearColor(0.3f, 0.4f, 0.7f, 1.0f);
@@ -129,6 +144,10 @@ public class Window {
                 }
             }
 
+            // Close the window when escape gets pressed (closes on release)
+            if (Keyboard.get().isKeyReleased(GLFW_KEY_ESCAPE))
+                glfwSetWindowShouldClose(window, true);
+
             // Render
             shader.start();
             shader.loadViewMatrix(camera);
@@ -141,12 +160,11 @@ public class Window {
         }
 
         model.delete();
-        texture.delete();
+//        texture.delete();
         shader.delete();
     }
 
     public static void main(String[] args) {
         new Window().run();
     }
-
 }
