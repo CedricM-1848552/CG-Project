@@ -112,12 +112,7 @@ public class Window {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         if (glfwRawMouseMotionSupported())
             glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-        glfwSetCursorPosCallback(window, new GLFWCursorPosCallbackI() {
-            @Override
-            public void invoke(long window, double xpos, double ypos) {
-                camera.changeDirection(xpos, ypos);
-            }
-        });
+        glfwSetCursorPosCallback(window, (window, xpos, ypos) -> camera.changeDirection(xpos, ypos));
 
         var showingWireframe = false;
 
