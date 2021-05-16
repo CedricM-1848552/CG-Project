@@ -36,9 +36,6 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
 
-        // Generate MipMap
-        glGenerateMipmap(GL_TEXTURE_2D);
-
         // read texture file
         MemoryStack stack = MemoryStack.stackGet();
         IntBuffer w = stack.mallocInt(1);
@@ -53,7 +50,13 @@ public class Texture {
         int width = w.get();
         int height = h.get();
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+
+        // Generate MipMap
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Cleanup memory
+        stbi_image_free(image);
     }
 
     public Texture(String textureFile) {
@@ -78,18 +81,20 @@ public class Texture {
                 format = GL_RGBA;
 
             glBindTexture(GL_TEXTURE_2D, texture);
-            glTexImage2D(GL_TEXTURE_2D, 0, format, width.get(0), height.get(0), 0, format, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
 
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            glTexImage2D(GL_TEXTURE_2D, 0, format, width.get(0), height.get(0), 0, format, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+
+            stbi_image_free(data);
         }
         else {
             System.out.println("Failed to load texture at path: " + path);
         }
-        stbi_image_free(data);
     }
 
     public void delete() {
