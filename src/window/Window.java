@@ -90,6 +90,9 @@ public class Window {
 
         // Make the window visible
         glfwShowWindow(window);
+
+        // Resizes viewport when the window size changes
+        glfwSetFramebufferSizeCallback(window, (window, width, height) -> glViewport(0, 0, width, height));
     }
 
     private void loop() {
