@@ -4,18 +4,15 @@ import enitities.Camera;
 import enitities.Entity;
 import enitities.Light;
 import models.Model;
-import models.TexturedModel;
 import org.joml.Vector3f;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 import shaders.StaticShader;
-import textures.Texture;
 
 import java.nio.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -98,7 +95,7 @@ public class Window {
     private void loop() {
         GL.createCapabilities();
 
-        var model = new Model("res/backpack/backpack.obj");
+        var model = new Model("res/bricks/Brick.obj");
 
         var entity = new Entity(model, new Vector3f(0, -10, -25), new Vector3f(0, 180, 0), 1);
         var light1 = new Light(new Vector3f(0, 5, 0), new Vector3f(1, 1, 1), new Vector3f(1, 0.01f, 0.002f));
