@@ -1,6 +1,8 @@
 package enitities;
 
 import org.joml.Vector3f;
+import physics.BoundingBox;
+import shaders.StaticShader;
 import window.Keyboard;
 import window.Window;
 
@@ -18,10 +20,13 @@ public class Camera {
     private float pitch;
     private float yaw;
 
+    private BoundingBox boundingBox;
+
     public Camera() {
-        this.position = new Vector3f(0, 0, 3);
+        this.position = new Vector3f(0, 2, 0);
         this.pitch = 0;
         this.yaw = 0;
+//        this.boundingBox = new BoundingBox(0, 0, 0, 0.5f, 2, 0.5f);
     }
 
     public void move() {
@@ -47,6 +52,7 @@ public class Camera {
         if (Keyboard.get().isKeyDown(GLFW_KEY_SPACE)) {
             position.y += 0.05f;
         }
+//        boundingBox.move(position.x, position.z);
     }
 
     public void changeDirection(double xpos, double ypos) {
@@ -93,4 +99,8 @@ public class Camera {
     public void setYaw(float yaw) {
         this.yaw = yaw;
     }
+
+//    public void render(StaticShader shader) {
+//        boundingBox.render(shader);
+//    }
 }

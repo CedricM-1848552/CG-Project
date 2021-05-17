@@ -97,6 +97,7 @@ public class Window {
         GL.createCapabilities();
 
         var model = new Model("res/backpack/backpack.obj");
+//        var model = new Model("res/gun2/Gun.dae");
 
         var entity = new Entity(model, new Vector3f(0, -10, -25), new Vector3f(0, 180, 0), 1);
         var light1 = new Light(new Vector3f(0, 5, 0), new Vector3f(1, 1, 1), new Vector3f(1, 0.01f, 0.002f));

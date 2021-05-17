@@ -112,7 +112,7 @@ public class Model {
         this.vboVertices = 0;
         this.vertexCount = 0;
 
-        AIScene scene = Assimp.aiImportFile(path, Assimp.aiProcess_Triangulate | Assimp.aiProcess_FlipUVs | Assimp.aiProcess_GenNormals);
+        AIScene scene = Assimp.aiImportFile(path, Assimp.aiProcess_Triangulate | Assimp.aiProcess_GenNormals);
 
         // Checks if the scene and root node of the scene exist and if the returned data is complete
         if ((scene == null) || (scene.mRootNode() == null)  || ((scene.mFlags() & Assimp.AI_SCENE_FLAGS_INCOMPLETE) == 1)) {
