@@ -23,6 +23,30 @@ public class Mesh {
         this.indices = indices;
         this.textures = textures;
 
+        setBuffers();
+    }
+
+    public void render(Shader shader) {
+        int diffuseNum = 1;
+        int specularNum = 1;
+
+        for (int i = 0; i < textures.size(); ++i) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            String name = textures.get(i).getType();
+            int number = 0;
+            if (name.equals("textureDiffuse"))
+                number = diffuseNum++;
+            else if (name.equals("textureSpecular"))
+                number = specularNum++;
+            shader.setFloat("material." + name + number, i);
+            glBindTexture(GL_TEXTURE_2D, textures.get(i).getId());
+        }
+        glBindVertexArray(vao);
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+    }
+
+    private void setBuffers() {
         this.vao = glGenVertexArrays();
         this.vbo = glGenBuffers();
         this.ebo = glGenBuffers();
@@ -52,26 +76,6 @@ public class Mesh {
         glVertexAttribPointer(2, 2, GL_FLOAT, false, Vertex.SIZE, Vertex.TEXTURE_OFFSET);
         glEnableVertexAttribArray(2);
 
-        glBindVertexArray(0);
-    }
-
-    public void render(Shader shader) {
-        int diffuseNum = 1;
-        int specularNum = 1;
-
-        for (int i = 0; i < textures.size(); ++i) {
-            glActiveTexture(GL_TEXTURE0 + i);
-            String name = textures.get(i).getType();
-            int number = 0;
-            if (name.equals("textureDiffuse"))
-                number = diffuseNum++;
-            else if (name.equals("textureSpecular"))
-                number = specularNum++;
-            shader.setFloat("material." + name + number, i);
-            glBindTexture(GL_TEXTURE_2D, textures.get(i).getId());
-        }
-        glBindVertexArray(vao);
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
     }
 }
