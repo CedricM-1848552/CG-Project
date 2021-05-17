@@ -81,6 +81,9 @@ public class Model {
         glDeleteVertexArrays(this.vao);
         glDeleteBuffers(vboVertices);
         glDeleteBuffers(vboIndices);
+        for (var texture : this.loadedTextures) {
+            texture.delete();
+        }
     }
 
     public final void render() {
@@ -142,15 +145,26 @@ public class Model {
         int numVertices = mesh.mNumVertices();
 
         for (int i = 0; i < numVertices; ++i) {
-            Vector3f coordinates = new Vector3f(mesh.mVertices().get(i).x(), mesh.mVertices().get(i).y(), mesh.mVertices().get(i).z());
-            Vector3f normal = new Vector3f(mesh.mNormals().get(i).x(), mesh.mNormals().get(i).y(), mesh.mNormals().get(i).z());
+            Vector3f coordinates = new Vector3f(
+                    mesh.mVertices().get(i).x(),
+                    mesh.mVertices().get(i).y(),
+                    mesh.mVertices().get(i).z());
+
+            Vector3f normal = new Vector3f(
+                    mesh.mNormals().get(i).x(),
+                    mesh.mNormals().get(i).y(),
+                    mesh.mNormals().get(i).z());
+
             Vector2f texture;
 
-//            AITexture.create(0);
-            if (mesh.mTextureCoords(0) != null)
-                texture = new Vector2f(mesh.mTextureCoords(0).get(i).x(), mesh.mTextureCoords(0).get(i).y());
-            else
+            if (mesh.mTextureCoords(0) != null) {
+                texture = new Vector2f(
+                        mesh.mTextureCoords(0).get(i).x(),
+                        1 - mesh.mTextureCoords(0).get(i).y());
+            } else {
                 texture = new Vector2f(0, 0);
+                System.out.println("no tex cor");
+            }
 
             vertices.add(new Vertex(coordinates, normal, texture));
         }
@@ -190,9 +204,9 @@ public class Model {
             AIString path = AIString.calloc();
             Assimp.aiGetMaterialTexture(material, textureType, i, path, null, null, null, null, null, (int[]) null);
             boolean alreadyLoaded = false;
-            for (int j = 0; j < loadedTextures.size(); ++j) {
-                if (loadedTextures.get(j).getPath().equals(directory + "/" + path.dataString())) {
-                    textures.add(loadedTextures.get(j));
+            for (Texture loadedTexture : loadedTextures) {
+                if (loadedTexture.getPath().equals(directory + "/" + path.dataString())) {
+                    textures.add(loadedTexture);
                     alreadyLoaded = true;
                     break;
                 }
@@ -208,7 +222,6 @@ public class Model {
     }
 
     public void render(Shader shader) {
-        for (int i = 0; i < meshes.size(); ++i)
-            meshes.get(i).render(shader);
+        for (Mesh mesh : meshes) mesh.render(shader);
     }
 }
