@@ -19,10 +19,6 @@ public class Vertex {
         this.texture = texture;
     }
 
-    public static int size() {
-        return 8 * Float.BYTES;
-    }
-
     public float[] toFloatArray() {
         return new float[]{coordinates.x, coordinates.y, coordinates.z, normal.x, normal.y, normal.z, texture.x, texture.y};
     }
