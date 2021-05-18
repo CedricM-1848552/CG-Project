@@ -3,8 +3,7 @@ package enitities;
 import models.Model;
 import org.joml.Vector3f;
 import shaders.StaticShader;
-import window.Keyboard;
-import window.Window;
+import window.*;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -19,6 +18,7 @@ public class Player {
     private double prevY = (double) Window.HEIGHT / 2;
     private boolean firstMove = true;
     private final Entity gun;
+    private final Sound pew;
 
     public Player() {
         this.camera = new Camera();
@@ -28,9 +28,13 @@ public class Player {
         this.gunPositionRelativeToCamera = new Vector3f(fixedGunPosition);
         this.gun = new Entity(gunModel, fixedGunPosition, new Vector3f(270, 0, 270), 1);
         this.camera.setPosition(new Vector3f(0, 2, 0));
+        this.pew = new Sound("res/pew/pew.wav");
     }
 
-    public void changeDirection(double xpos, double ypos) {
+    public void changeDirection() {
+        var xpos = Cursor.get().getXpos();
+        var ypos = Cursor.get().getYpos();
+
         if (firstMove) {
             prevX = xpos;
             prevY = ypos;
@@ -59,7 +63,9 @@ public class Player {
         this.gun.setPosition(this.camera.getPosition().add(gunPositionRelativeToCamera));
     }
 
-    public void move() {
+    public void update() {
+        this.changeDirection();
+
         var cameraPosition = this.camera.getPosition();
         var gunPosition = this.gun.getPosition();
         var cameraYaw = this.camera.getYaw();
@@ -92,6 +98,9 @@ public class Player {
             cameraPosition.x += dx2;
             gunPosition.z -= dz2;
             gunPosition.x += dx2;
+        }
+        if (Mouse.get().isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
+            this.pew.play();
         }
 
         this.gun.setPosition(gunPosition);

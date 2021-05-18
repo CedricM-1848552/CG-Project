@@ -10,11 +10,13 @@ public class Keyboard implements GLFWKeyCallbackI {
 
     private static Keyboard instance;
 
+    private final ArrayList<Integer> downKeys;
     private final ArrayList<Integer> pressedKeys;
     private final ArrayList<Integer> releasedKeys;
     private int activeMods;
 
     private Keyboard() {
+        this.downKeys = new ArrayList<>();
         this.pressedKeys = new ArrayList<>();
         this.releasedKeys = new ArrayList<>();
         this.activeMods = 0;
@@ -30,16 +32,17 @@ public class Keyboard implements GLFWKeyCallbackI {
 
     public void update() {
         this.releasedKeys.clear();
-        glfwPollEvents();
+        this.pressedKeys.clear();
     }
 
     @Override
     public void invoke(long window, int key, int scancode, int action, int mods) {
         this.activeMods = mods;
         if (action == GLFW_PRESS) {
+            downKeys.add(key);
             pressedKeys.add(key);
         } else if (action == GLFW_RELEASE) {
-            pressedKeys.remove(Integer.valueOf(key));
+            downKeys.remove(Integer.valueOf(key));
             releasedKeys.add(key);
         }
     }
@@ -53,14 +56,14 @@ public class Keyboard implements GLFWKeyCallbackI {
     }
 
     public boolean isKeyDown(int key) {
-        return isKeyPressed(key);
+        return downKeys.contains(key);
     }
 
     public boolean isKeyUp(int key) {
-        return !isKeyPressed(key);
+        return !isKeyDown(key);
     }
 
     public boolean isModifierActive(int modifier) {
-        return (activeMods & modifier) == modifier;
+        return (activeMods & modifier) != 0;
     }
 }

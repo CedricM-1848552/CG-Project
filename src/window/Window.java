@@ -57,11 +57,17 @@ public class Window {
             throw new RuntimeException("Failed to create the GLFW window");
 
         glfwSetKeyCallback(window, Keyboard.get());
+        glfwSetMouseButtonCallback(window, Mouse.get());
+
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        if (glfwRawMouseMotionSupported())
+            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+        glfwSetCursorPosCallback(window, Cursor.get());
 
         // Get the thread stack and push a new frame
         try ( MemoryStack stack = stackPush() ) {
-            IntBuffer pWidth = stack.mallocInt(1); // int*
-            IntBuffer pHeight = stack.mallocInt(1); // int*
+            IntBuffer pWidth = stack.mallocInt(1);
+            IntBuffer pHeight = stack.mallocInt(1);
 
             // Get the window size passed to glfwCreateWindow
             glfwGetWindowSize(window, pWidth, pHeight);
@@ -76,7 +82,7 @@ public class Window {
                     (videomode.width() - pWidth.get(0)) / 2,
                     (videomode.height() - pHeight.get(0)) / 2
             );
-        } // the stack frame is popped automatically
+        }
 
         // Make the OpenGL context current
         glfwMakeContextCurrent(window);
@@ -164,11 +170,6 @@ public class Window {
 
         var player = new Player();
 
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        if (glfwRawMouseMotionSupported())
-            glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-        glfwSetCursorPosCallback(window, (window, xpos, ypos) -> player.changeDirection(xpos, ypos));
-
         var showingWireframe = false;
 
         glClearColor(0.3f, 0.4f, 0.7f, 1.0f);
@@ -181,7 +182,9 @@ public class Window {
 
             // Update
             Keyboard.get().update();
-            player.move();
+            Mouse.get().update();
+            glfwPollEvents();
+            player.update();
 
             // Toggle wireframe mode
             if (Keyboard.get().isKeyReleased(GLFW_KEY_F)) {
