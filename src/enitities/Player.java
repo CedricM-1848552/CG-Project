@@ -7,13 +7,13 @@ import window.Keyboard;
 import window.Window;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
 
 public class Player {
     private final Camera camera;
     public static final float SENSITIVITY = 0.05f;
     public static final float MOVEMENT = 0.05f;
-    private final Vector3f gunPosition;
+    private final Vector3f fixedGunPosition;
+    private final Vector3f gunPositionRelativeToCamera;
 
     private double prevX = (double) Window.WIDTH / 2;
     private double prevY = (double) Window.HEIGHT / 2;
@@ -24,8 +24,9 @@ public class Player {
         this.camera = new Camera();
 
         var gunModel = new Model("res/gun/Gun.dae");
-        this.gunPosition = new Vector3f(.4f, 1.5f, -1f);
-        this.gun = new Entity(gunModel, gunPosition, new Vector3f(270, 0, 270), 1);
+        this.fixedGunPosition = new Vector3f(.4f, -0.5f, -1f);
+        this.gunPositionRelativeToCamera = new Vector3f(fixedGunPosition);
+        this.gun = new Entity(gunModel, fixedGunPosition, new Vector3f(270, 0, 270), 1);
     }
 
     public void changeDirection(double xpos, double ypos) {
@@ -48,10 +49,15 @@ public class Player {
         this.gun.setRotation(this.gun.getRotation().add(new Vector3f(0, 0, -xOffset)));
 
         var cameraYaw = this.camera.getYaw();
-        var x = (float)(this.gunPosition.x * Math.cos(Math.toRadians(cameraYaw)) + this.gunPosition.z * Math.sin(Math.toRadians(-cameraYaw)));
-        var z = (float)(this.gunPosition.x * Math.sin(Math.toRadians(cameraYaw)) + this.gunPosition.z * Math.cos(Math.toRadians(cameraYaw)));
 
-        this.gun.setPosition(new Vector3f(x, this.gunPosition.y, z));
+        var gunOffset = this.gun.getPosition().sub(this.gunPositionRelativeToCamera);
+
+        gunPositionRelativeToCamera.x = (float)(this.fixedGunPosition.x * Math.cos(Math.toRadians(cameraYaw))
+                + this.fixedGunPosition.z * Math.sin(Math.toRadians(-cameraYaw)));
+        gunPositionRelativeToCamera.z = (float)(this.fixedGunPosition.x * Math.sin(Math.toRadians(cameraYaw))
+                + this.fixedGunPosition.z * Math.cos(Math.toRadians(cameraYaw)));
+
+        this.gun.setPosition(gunOffset.add(gunPositionRelativeToCamera));
     }
 
     public void move() {

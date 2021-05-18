@@ -9,7 +9,7 @@ public class Camera {
     private float yaw;
 
     public Camera() {
-        this.position = new Vector3f(0, 2, 0);
+        this.position = new Vector3f(0, 0, 0);
         this.pitch = 0;
         this.yaw = 0;
     }

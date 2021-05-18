@@ -60,10 +60,10 @@ public class Entity {
     }
 
     public Vector3f getPosition() {
-        return this.position;
+        return new Vector3f(this.position);
     }
 
     public Vector3f getRotation() {
-        return this.rotation;
+        return new Vector3f(this.rotation);
     }
 }
