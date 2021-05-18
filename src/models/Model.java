@@ -77,14 +77,11 @@ public class Model {
 //        glBindVertexArray(0);
 //    }
 
-//    public void delete() {
-//        glDeleteVertexArrays(this.vao);
-//        glDeleteBuffers(vboVertices);
-//        glDeleteBuffers(vboIndices);
-//        for (var texture : this.loadedTextures) {
-//            texture.delete();
-//        }
-//    }
+    public void delete() {
+        for (var texture : this.loadedTextures) {
+            texture.delete();
+        }
+    }
 
 //    public final void render() {
 //        bind();
