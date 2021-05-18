@@ -58,4 +58,12 @@ public class Entity {
         shader.loadTransformationMatrix(transformation);
         this.model.render(shader);
     }
+
+    public Vector3f getPosition() {
+        return this.position;
+    }
+
+    public Vector3f getRotation() {
+        return this.rotation;
+    }
 }
