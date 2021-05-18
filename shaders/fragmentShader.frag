@@ -1,5 +1,5 @@
 #version 330 core
-#define lightCount 5
+#define lightCount 6
 
 in vec2 pass_textureCoordinates;
 in vec3 surfaceNormal;
@@ -21,7 +21,7 @@ void main() {
         float attenuationFactor = attenuation[i].x + attenuation[i].y * distance + attenuation[i].z * distance * distance;
         vec3 unitLightVector = normalize(toLightVector[i]);
         float normalDotLight = dot(unitNormal, unitLightVector);
-        float brightness = max(normalDotLight, 0.0f);
+        float brightness = normalDotLight;
         totalDiffuse = totalDiffuse + (brightness * lightColour[i])/attenuationFactor;
     }
 

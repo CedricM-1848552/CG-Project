@@ -11,7 +11,9 @@ import org.lwjgl.system.*;
 import shaders.StaticShader;
 
 import java.nio.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Objects;
 
 import static org.lwjgl.glfw.Callbacks.*;
@@ -134,14 +136,25 @@ public class Window {
             }
         }
 
-        // Lights
-        var lights = new Light[]{
-                // Ambient light
-                new Light(new Vector3f(0, 100, 0), new Vector3f(.25f, .25f, .25f), new Vector3f(1, 0, 0)),
-
-                // Center fire light
-                new Light(new Vector3f(0, 1, 0), new Vector3f(1, .6f, 0), new Vector3f(1, 0.01f, 0.002f)),
+        // Center campfire
+        var campfireModel = new Model("res/campfire/Campfire_clean.OBJ");
+        var campfires = new Entity[] {
+                new Entity(campfireModel, new Vector3f(0, 0, 0), new Vector3f(0 , 0, 0), 0.01f),
+                new Entity(campfireModel, new Vector3f(15, 0, 15), new Vector3f(0 , 0, 0), 0.01f),
+                new Entity(campfireModel, new Vector3f(-12, 0, -13), new Vector3f(0 , 0, 0), 0.01f),
+                new Entity(campfireModel, new Vector3f(-14, 0, 12), new Vector3f(0 , 0, 0), 0.01f),
+                new Entity(campfireModel, new Vector3f(11, 0, -13), new Vector3f(0 , 0, 0), 0.01f),
         };
+
+        // Lights
+        var lights = new ArrayList<>(
+                Collections.singletonList(
+                        new Light(new Vector3f(0, 100, 0), new Vector3f(.2f, .2f, .2f), new Vector3f(1, 0, 0))
+                ));
+
+        for (var campfire : campfires) {
+            lights.add(new Light(campfire.getPosition().add(new Vector3f(0, 1, 0)), new Vector3f(.7f, .45f, 0), new Vector3f(1, 0.01f, 0.002f)));
+        }
 
         var shader = new StaticShader();
 
@@ -185,8 +198,11 @@ public class Window {
             // Render
             shader.start();
             player.loadTo(shader);
-            shader.loadLights(Arrays.asList(lights));
+            shader.loadLights(lights);
             player.render(shader);
+            for (var campfire : campfires) {
+                campfire.render(shader);
+            }
             for (var tile : floorTiles) {
                 tile.render(shader);
             }
