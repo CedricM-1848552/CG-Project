@@ -131,7 +131,6 @@ public class Model {
             boolean alreadyLoaded = false;
             for (Texture loadedTexture : loadedTextures) {
                 if (loadedTexture.getPath().equals(directory + "/" + path.dataString())) {
-                    System.out.println(directory + "/" + path.dataString());
                     textures.add(loadedTexture);
                     alreadyLoaded = true;
                     break;
@@ -139,7 +138,6 @@ public class Model {
             }
             if (!alreadyLoaded) {
                 Texture texture = new Texture(directory + "/" + path.dataString());
-                System.out.println(directory + "/" + path.dataString());
                 texture.setType(type);
                 textures.add(texture);
                 loadedTextures.add(texture);

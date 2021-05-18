@@ -9,7 +9,7 @@ import window.Window;
 import java.util.List;
 
 public class StaticShader extends Shader {
-    private static final int MAX_LIGHTS = 2;
+    private static final int MAX_LIGHTS = 5;
 
     private static final String VERTEX_FILE = "shaders/vertexShader.vert";
     private static final String FRAGMENT_FILE = "shaders/fragmentShader.frag";
