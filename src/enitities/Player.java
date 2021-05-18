@@ -11,7 +11,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class Player {
     private final Camera camera;
     public static final float SENSITIVITY = 0.05f;
-    public static final float MOVEMENT = 0.05f;
+    public static final float MOVEMENT = 0.08f;
     private final Vector3f fixedGunPosition;
     private final Vector3f gunPositionRelativeToCamera;
 

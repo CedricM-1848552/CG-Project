@@ -24,7 +24,7 @@ void main() {
         totalDiffuse = totalDiffuse + (brightness * lightColour[i])/attenuationFactor;
     }
 
-    totalDiffuse = max(totalDiffuse, 0.4f);
+    totalDiffuse = max(totalDiffuse, 0.2f);
 
     colour = vec4(totalDiffuse, 1.0) * texture(textureSampler, pass_textureCoordinates);
 }

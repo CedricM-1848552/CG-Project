@@ -1,6 +1,5 @@
 package window;
 
-import enitities.Camera;
 import enitities.Entity;
 import enitities.Light;
 import enitities.Player;
@@ -94,7 +93,6 @@ public class Window {
         GL.createCapabilities();
 
         var wallModel = new Model("res/wall/Wall.obj");
-
         var walls = new Entity[]{
                 // Front
                 new Entity(wallModel, new Vector3f(4, 0, -4.9f), new Vector3f(0, 0, 0), .1f),
@@ -125,8 +123,18 @@ public class Window {
                 new Entity(wallModel, new Vector3f(5.1f, 0, -4), new Vector3f(0, 270, 0), .1f),
         };
 
+        var floorModel = new Model("res/grass/grass_floor.obj");
+        var floorSize = 25;
+        var floorTiles = new Entity[floorSize*floorSize];
+
+        for (int z = 0; z < floorSize; z++) {
+            for (int x = 0; x < floorSize; x++) {
+                floorTiles[z *floorSize+x] = new Entity(floorModel, new Vector3f(x*2 - floorSize, 0, z*2 - floorSize), new Vector3f(0, 0, 0), 1f);
+            }
+        }
+
         var light1 = new Light(new Vector3f(0, 5, 0), new Vector3f(1, 1, 1), new Vector3f(1, 0.01f, 0.002f));
-        var light2 = new Light(new Vector3f(0, 0, -5), new Vector3f(1, 0, 0), new Vector3f(1, 0.01f, 0.002f));
+        var light2 = new Light(new Vector3f(0, 1, 0), new Vector3f(1, 0, 0), new Vector3f(1, 0.01f, 0.002f));
 
         var shader = new StaticShader();
 
@@ -172,6 +180,9 @@ public class Window {
             player.loadTo(shader);
             shader.loadLights(Arrays.asList(light1, light2));
             player.render(shader);
+            for (var tile : floorTiles) {
+                tile.render(shader);
+            }
             for (var wall : walls) {
                 wall.render(shader);
             }

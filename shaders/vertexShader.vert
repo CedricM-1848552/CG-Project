@@ -20,6 +20,6 @@ void main() {
 
     surfaceNormal = (transformationMatrix * vec4(normal, 0.0f)).xyz;
     for (int i = 0; i < 2; i++) {
-        toLightVector[i] = lightPosition[i] - worldPosition.xyz[i];
+        toLightVector[i] = lightPosition[i] - worldPosition.xyz;
     }
 }
