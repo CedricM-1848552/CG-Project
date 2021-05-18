@@ -136,6 +136,10 @@ public class Window {
             }
         }
 
+        // Target
+        var targetModel = new Model("res/target/shtfrtr.obj");
+        var target = new Entity(targetModel, new Vector3f(0, 0, 2), new Vector3f(0, 0, 0), 0.3f);
+
         // Center campfire
         var campfireModel = new Model("res/campfire/Campfire_clean.OBJ");
         var campfires = new Entity[] {
@@ -200,6 +204,7 @@ public class Window {
             player.loadTo(shader);
             shader.loadLights(lights);
             player.render(shader);
+            target.render(shader);
             for (var campfire : campfires) {
                 campfire.render(shader);
             }
