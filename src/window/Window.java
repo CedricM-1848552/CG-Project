@@ -93,12 +93,16 @@ public class Window {
     private void loop() {
         GL.createCapabilities();
 
+
         var light1 = new Light(new Vector3f(0, 5, 0), new Vector3f(1, 1, 1), new Vector3f(1, 0.01f, 0.002f));
         var light2 = new Light(new Vector3f(0, 0, -5), new Vector3f(1, 0, 0), new Vector3f(1, 0.01f, 0.002f));
 
         var shader = new StaticShader();
 
         var player = new Player();
+
+        var wallModel = new Model("res/wall/wall.obj");
+        var wall = new Entity(wallModel, new Vector3f(0), new Vector3f(0), .3f);
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         if (glfwRawMouseMotionSupported())
@@ -140,6 +144,7 @@ public class Window {
             player.loadTo(shader);
             shader.loadLights(Arrays.asList(light1, light2));
             player.render(shader);
+            wall.render(shader);
             shader.stop();
 
             // Swap buffers

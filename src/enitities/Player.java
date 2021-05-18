@@ -27,6 +27,7 @@ public class Player {
         this.fixedGunPosition = new Vector3f(.4f, -0.5f, -1f);
         this.gunPositionRelativeToCamera = new Vector3f(fixedGunPosition);
         this.gun = new Entity(gunModel, fixedGunPosition, new Vector3f(270, 0, 270), 1);
+        this.camera.setPosition(new Vector3f(0, 2, 0));
     }
 
     public void changeDirection(double xpos, double ypos) {
@@ -50,14 +51,12 @@ public class Player {
 
         var cameraYaw = this.camera.getYaw();
 
-        var gunOffset = this.gun.getPosition().sub(this.gunPositionRelativeToCamera);
-
         gunPositionRelativeToCamera.x = (float)(this.fixedGunPosition.x * Math.cos(Math.toRadians(cameraYaw))
                 + this.fixedGunPosition.z * Math.sin(Math.toRadians(-cameraYaw)));
         gunPositionRelativeToCamera.z = (float)(this.fixedGunPosition.x * Math.sin(Math.toRadians(cameraYaw))
                 + this.fixedGunPosition.z * Math.cos(Math.toRadians(cameraYaw)));
 
-        this.gun.setPosition(gunOffset.add(gunPositionRelativeToCamera));
+        this.gun.setPosition(this.camera.getPosition().add(gunPositionRelativeToCamera));
     }
 
     public void move() {
