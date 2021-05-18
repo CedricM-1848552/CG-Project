@@ -93,6 +93,37 @@ public class Window {
     private void loop() {
         GL.createCapabilities();
 
+        var wallModel = new Model("res/wall/Wall.obj");
+
+        var walls = new Entity[]{
+                // Front
+                new Entity(wallModel, new Vector3f(4, 0, -4.9f), new Vector3f(0, 0, 0), .1f),
+                new Entity(wallModel, new Vector3f(2, 0, -4.9f), new Vector3f(0, 0, 0), .1f),
+                new Entity(wallModel, new Vector3f(-0, 0, -4.9f), new Vector3f(0, 0, 0), .1f),
+                new Entity(wallModel, new Vector3f(-2, 0, -4.9f), new Vector3f(0, 0, 0), .1f),
+                new Entity(wallModel, new Vector3f(-4, 0, -4.9f), new Vector3f(0, 0, 0), .1f),
+
+                // Back
+                new Entity(wallModel, new Vector3f(4.2f, 0, 5.1f), new Vector3f(0, 180, 0), .1f),
+                new Entity(wallModel, new Vector3f(2.2f, 0, 5.1f), new Vector3f(0, 180, 0), .1f),
+                new Entity(wallModel, new Vector3f(0.2f, 0, 5.1f), new Vector3f(0, 180, 0), .1f),
+                new Entity(wallModel, new Vector3f(-1.8f, 0, 5.1f), new Vector3f(0, 180, 0), .1f),
+                new Entity(wallModel, new Vector3f(-3.8f, 0, 5.1f), new Vector3f(0, 180, 0), .1f),
+
+                // Left
+                new Entity(wallModel, new Vector3f(-4.9f, 0, 4.2f), new Vector3f(0, 90, 0), .1f),
+                new Entity(wallModel, new Vector3f(-4.9f, 0, 2.2f), new Vector3f(0, 90, 0), .1f),
+                new Entity(wallModel, new Vector3f(-4.9f, 0, 0.2f), new Vector3f(0, 90, 0), .1f),
+                new Entity(wallModel, new Vector3f(-4.9f, 0, -1.8f), new Vector3f(0, 90, 0), .1f),
+                new Entity(wallModel, new Vector3f(-4.9f, 0, -3.8f), new Vector3f(0, 90, 0), .1f),
+
+                // Right
+                new Entity(wallModel, new Vector3f(5.1f, 0, 4), new Vector3f(0, 270, 0), .1f),
+                new Entity(wallModel, new Vector3f(5.1f, 0, 2), new Vector3f(0, 270, 0), .1f),
+                new Entity(wallModel, new Vector3f(5.1f, 0, 0), new Vector3f(0, 270, 0), .1f),
+                new Entity(wallModel, new Vector3f(5.1f, 0, -2), new Vector3f(0, 270, 0), .1f),
+                new Entity(wallModel, new Vector3f(5.1f, 0, -4), new Vector3f(0, 270, 0), .1f),
+        };
 
         var light1 = new Light(new Vector3f(0, 5, 0), new Vector3f(1, 1, 1), new Vector3f(1, 0.01f, 0.002f));
         var light2 = new Light(new Vector3f(0, 0, -5), new Vector3f(1, 0, 0), new Vector3f(1, 0.01f, 0.002f));
@@ -100,9 +131,6 @@ public class Window {
         var shader = new StaticShader();
 
         var player = new Player();
-
-        var wallModel = new Model("res/wall/wall.obj");
-        var wall = new Entity(wallModel, new Vector3f(0), new Vector3f(0), .3f);
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         if (glfwRawMouseMotionSupported())
@@ -144,7 +172,9 @@ public class Window {
             player.loadTo(shader);
             shader.loadLights(Arrays.asList(light1, light2));
             player.render(shader);
-            wall.render(shader);
+            for (var wall : walls) {
+                wall.render(shader);
+            }
             shader.stop();
 
             // Swap buffers
