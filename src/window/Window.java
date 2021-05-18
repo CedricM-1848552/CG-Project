@@ -3,6 +3,7 @@ package window;
 import enitities.Camera;
 import enitities.Entity;
 import enitities.Light;
+import enitities.Player;
 import models.Model;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
@@ -91,21 +92,17 @@ public class Window {
 
     private void loop() {
         GL.createCapabilities();
-
-        var model = new Model("res/gun/Gun.dae");
-
-        var entity = new Entity(model, new Vector3f(0, -10, -25), new Vector3f(0, 180, 0), 1);
         var light1 = new Light(new Vector3f(0, 5, 0), new Vector3f(1, 1, 1), new Vector3f(1, 0.01f, 0.002f));
         var light2 = new Light(new Vector3f(0, 0, -5), new Vector3f(1, 0, 0), new Vector3f(1, 0.01f, 0.002f));
 
         var shader = new StaticShader();
 
-        var camera = new Camera();
+        var player = new Player();
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         if (glfwRawMouseMotionSupported())
             glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-        glfwSetCursorPosCallback(window, (window, xpos, ypos) -> camera.changeDirection(xpos, ypos));
+        glfwSetCursorPosCallback(window, (window, xpos, ypos) -> player.changeDirection(xpos, ypos));
 
         var showingWireframe = false;
 
@@ -119,7 +116,7 @@ public class Window {
 
             // Update
             Keyboard.get().update();
-            camera.move();
+            player.move();
 
             // Toggle wireframe mode
             if (Keyboard.get().isKeyReleased(GLFW_KEY_F)) {
@@ -139,16 +136,15 @@ public class Window {
 
             // Render
             shader.start();
-            shader.loadViewMatrix(camera);
+            player.loadTo(shader);
             shader.loadLights(Arrays.asList(light1, light2));
-            entity.render(shader);
+            player.render(shader);
             shader.stop();
 
             // Swap buffers
             glfwSwapBuffers(window);
         }
 
-        model.delete();
         shader.delete();
     }
 
