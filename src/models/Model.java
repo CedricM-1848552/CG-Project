@@ -22,6 +22,13 @@ public class Model {
     private ArrayList<Mesh> meshes = new ArrayList<>();
     private ArrayList<Texture> loadedTextures = new ArrayList<>();
 
+    private float minX = Float.POSITIVE_INFINITY;
+    private float maxX = Float.NEGATIVE_INFINITY;
+    private float minY = Float.POSITIVE_INFINITY;
+    private float maxY = Float.NEGATIVE_INFINITY;
+    private float minZ = Float.POSITIVE_INFINITY;
+    private float maxZ = Float.NEGATIVE_INFINITY;
+
     public void delete() {
         for (var texture : this.loadedTextures) {
             texture.delete();
@@ -78,6 +85,8 @@ public class Model {
                     mesh.mNormals().get(i).z());
 
             Vector2f texture;
+
+            checkExtrema(mesh.mVertices().get(i).x(), mesh.mVertices().get(i).y(), mesh.mVertices().get(i).z());
 
             if (mesh.mTextureCoords(0) != null) {
                 texture = new Vector2f(
@@ -148,5 +157,62 @@ public class Model {
 
     public void render(Shader shader) {
         for (Mesh mesh : meshes) mesh.render(shader);
+    }
+
+    private void checkExtrema(float x, float y, float z) {
+        minX = Math.min(x, minX);
+        maxX = Math.max(x, maxX);
+        minY = Math.min(y, minY);
+        maxY = Math.max(y, maxY);
+        minZ = Math.min(z, minZ);
+        maxZ = Math.max(z, maxZ);
+    }
+
+    public float getMinX() {
+        return minX;
+    }
+
+    public void setMinX(float minX) {
+        this.minX = minX;
+    }
+
+    public float getMaxX() {
+        return maxX;
+    }
+
+    public void setMaxX(float maxX) {
+        this.maxX = maxX;
+    }
+
+    public float getMinY() {
+        return minY;
+    }
+
+    public void setMinY(float minY) {
+        this.minY = minY;
+    }
+
+    public float getMaxY() {
+        return maxY;
+    }
+
+    public void setMaxY(float maxY) {
+        this.maxY = maxY;
+    }
+
+    public float getMinZ() {
+        return minZ;
+    }
+
+    public void setMinZ(float minZ) {
+        this.minZ = minZ;
+    }
+
+    public float getMaxZ() {
+        return maxZ;
+    }
+
+    public void setMaxZ(float maxZ) {
+        this.maxZ = maxZ;
     }
 }

@@ -8,6 +8,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
+import physics.BoundingBox;
 import shaders.StaticShader;
 
 import java.nio.*;
@@ -144,7 +145,7 @@ public class Window {
 
         // Target
         var targetModel = new Model("res/target/shtfrtr.obj");
-        var target = new Entity(targetModel, new Vector3f(0, 0, 2), new Vector3f(0, 0, 0), 0.3f);
+        var target = new Entity(targetModel, new Vector3f(0, 0, -15), new Vector3f(0, 0, 0), 0.3f);
 
         // Center campfire
         var campfireModel = new Model("res/campfire/Campfire_clean.OBJ");
@@ -184,7 +185,10 @@ public class Window {
             Keyboard.get().update();
             Mouse.get().update();
             glfwPollEvents();
-            player.update();
+            var entities = new ArrayList<Entity>();
+            Collections.addAll(entities, walls);
+            Collections.addAll(entities, campfires);
+            player.update(entities);
 
             // Toggle wireframe mode
             if (Keyboard.get().isKeyReleased(GLFW_KEY_F)) {

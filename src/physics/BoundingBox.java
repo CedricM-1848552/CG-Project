@@ -1,57 +1,67 @@
 package physics;
 
-import models.Model;
+import org.joml.Vector3f;
 
 public class BoundingBox {
-    private float x;
-    private float y;
-    private float z;
-    private float width;
-    private float length;
-    private float height;
+    private float minX;
+    private float maxX;
+    private float minY;
+    private float maxY;
+    private float minZ;
+    private float maxZ;
 
-//    private Model model;
+    public BoundingBox(float minX, float maxX, float minY, float maxY, float minZ, float maxZ) {
+        this.minX = minX;
+        this.maxX = maxX;
+        this.minY = minY;
+        this.maxY = maxY;
+        this.minZ = minZ;
+        this.maxZ = maxZ;
+    }
+
+    public BoundingBox(BoundingBox other) {
+        this.minX = other.minX;
+        this.maxX = other.maxX;
+        this.minY = other.minY;
+        this.maxY = other.maxY;
+        this.minZ = other.minZ;
+        this.maxZ = other.maxZ;
+    }
 
     /**
-     * Constructor
-     * @param x x coordinate of the front bottom left point of the cube
-     * @param y y coordinate of the front bottom left point of the cube
-     * @param z z coordinate of the front bottom left point of the cube
-     * @param width width of the cube
-     * @param height height of the cube
-     * @param length length of the cube
+     * Returns the bottom middle position
+     * @return a vector containing the bottom middle position of the bounding box
      */
-    public BoundingBox(float x, float y, float z, float width, float height, float length) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.width = width;
-        this.length = length;
-        this.height = height;
+    public Vector3f getPosition() {
+        float x = minX + (maxX - minX) / 2f;
+        float z = minZ + (maxZ - minZ) / 2f;
 
-//        this.model = new Model(new float[] {
-//                3, 3, 0,
-//                3, 6, 0,
-//                6, 6, 0,
-//                6, 3, 0,
-//                3, 3, 3,
-//                3, 6, 3,
-//                6, 6, 3,
-//                6, 3, 3
-//        }, new int[] {
-//                0, 1, 3,
-//                1, 2, 3,
-//                2, 3, 6,
-//                3, 6, 7,
-//                4, 6, 7,
-//                4, 5, 6,
-//                1, 4, 5,
-//                0, 1, 4,
-//                1, 2, 5,
-//                2, 5, 6,
-//                0, 3, 4,
-//                3, 4, 7
-//        });
+        return new Vector3f(x, minY, z);
+    }
+
+    public void scaleCoords(float scale) {
+        float xDiff = ((maxX - minX) / 2f) * (1f - scale);
+        float zDiff = ((maxZ - minZ) / 2f) * (1f - scale);
+
+        minX += xDiff;
+        maxX -= xDiff;
+        maxY -= (maxY - minY) * (1f - scale);
+        minZ += zDiff;
+        maxZ -= zDiff;
+    }
+
+    /**
+     * Rotates 90 degrees clock-wise
+     */
+    public void rotate90() {
+        var x1 = this.maxZ;
+        var x2 = this.minZ;
+        var z1 = this.maxX;
+        var z2 = this.minX;
+        this.minX = Math.min(x1, x2);
+        this.maxX = Math.max(x1, x2);
+        this.minZ = Math.min(z1, z2);
+        this.maxZ = Math.max(z1, z2);;
     }
 
     /**
@@ -60,67 +70,32 @@ public class BoundingBox {
      * @return true if it collides (has to collide on all 3 axes to really collide)
      */
     public boolean collides(BoundingBox boundingBox) {
-        boolean xCollision = this.x + this.width >= boundingBox.x;
-        boolean yCollision = this.y + this.height >= boundingBox.y;
-        boolean zCollision = this.z + this.length >= boundingBox.z;
+
+        var xCollision = (this.minX >= boundingBox.minX && this.minX <= boundingBox.maxX) || (this.maxX >= boundingBox.minX && this.maxX <= boundingBox.maxX);
+        var yCollision = (this.minY >= boundingBox.minY && this.minY <= boundingBox.maxY) || (this.maxY >= boundingBox.minY && this.maxY <= boundingBox.maxY);
+        var zCollision = (this.minZ >= boundingBox.minZ && this.minZ <= boundingBox.maxZ) || (this.maxZ >= boundingBox.minZ && this.maxZ <= boundingBox.maxZ);
 
         return (xCollision && yCollision && zCollision);
     }
 
-    public void move(float x, float z) {
-        this.x = x;
-        this.z = z;
+    public void increasePosition(float x, float y, float z) {
+        this.minX += x;
+        this.maxX += x;
+        this.minY += y;
+        this.maxY += y;
+        this.minZ += z;
+        this.maxZ += z;
     }
 
-//    public void render(StaticShader shader) {
-//        model.render();
-//    }
-
-    public float getX() {
-        return x;
-    }
-
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
-    }
-
-    public float getZ() {
-        return z;
-    }
-
-    public void setZ(float z) {
-        this.z = z;
-    }
-
-    public float getWidth() {
-        return width;
-    }
-
-    public void setWidth(float width) {
-        this.width = width;
-    }
-
-    public float getLength() {
-        return length;
-    }
-
-    public void setLength(float length) {
-        this.length = length;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-
-    public void setHeight(float height) {
-        this.height = height;
+    @Override
+    public String toString() {
+        return "BoundingBox{" +
+                "minX=" + minX +
+                ", maxX=" + maxX +
+                ", minY=" + minY +
+                ", maxY=" + maxY +
+                ", minZ=" + minZ +
+                ", maxZ=" + maxZ +
+                '}';
     }
 }

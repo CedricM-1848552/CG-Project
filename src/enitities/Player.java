@@ -2,8 +2,12 @@ package enitities;
 
 import models.Model;
 import org.joml.Vector3f;
+import physics.BoundingBox;
 import shaders.StaticShader;
 import window.*;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -19,6 +23,7 @@ public class Player {
     private boolean firstMove = true;
     private final Entity gun;
     private final Sound pew;
+    private BoundingBox boundingBox;
 
     public Player() {
         this.camera = new Camera();
@@ -27,8 +32,11 @@ public class Player {
         this.fixedGunPosition = new Vector3f(.4f, -0.5f, -1f);
         this.gunPositionRelativeToCamera = new Vector3f(fixedGunPosition);
         this.gun = new Entity(gunModel, fixedGunPosition, new Vector3f(270, 0, 270), 1);
-        this.camera.setPosition(new Vector3f(0, 2, 0));
+        this.camera.setPosition(new Vector3f(0, 2, -2));
         this.pew = new Sound("res/pew/pew.wav");
+        this.boundingBox = new BoundingBox(-.5f + camera.getPosition().x, .5f + camera.getPosition().x,
+                camera.getPosition().y - 2, camera.getPosition().y + .25f,
+                -.5f + camera.getPosition().z, .5f + camera.getPosition().z);
     }
 
     public void changeDirection() {
@@ -63,12 +71,12 @@ public class Player {
         this.gun.setPosition(this.camera.getPosition().add(gunPositionRelativeToCamera));
     }
 
-    public void update() {
+    public void update(ArrayList<Entity> entities) {
         this.changeDirection();
-
-        var cameraPosition = this.camera.getPosition();
-        var gunPosition = this.gun.getPosition();
+        var cameraPosition = new Vector3f(this.camera.getPosition());
+        var gunPosition = new Vector3f(this.gun.getPosition());
         var cameraYaw = this.camera.getYaw();
+        var oldBoundingBox = new BoundingBox(this.boundingBox);
 
         double dx1 = MOVEMENT * Math.sin(Math.toRadians(cameraYaw));
         double dz1 = MOVEMENT * Math.cos(Math.toRadians(cameraYaw));
@@ -80,31 +88,40 @@ public class Player {
             cameraPosition.z -= dz1;
             gunPosition.x += dx1;
             gunPosition.z -= dz1;
+            boundingBox.increasePosition((float) dx1, 0, (float) -dz1);
         }
         if (Keyboard.get().isKeyDown(GLFW_KEY_S)) {
             cameraPosition.x -= dx1;
             cameraPosition.z += dz1;
             gunPosition.x -= dx1;
             gunPosition.z += dz1;
+            boundingBox.increasePosition((float) -dx1, 0, (float) dz1);
         }
         if (Keyboard.get().isKeyDown(GLFW_KEY_A)) {
             cameraPosition.z += dz2;
             cameraPosition.x -= dx2;
             gunPosition.z += dz2;
             gunPosition.x -= dx2;
+            boundingBox.increasePosition((float) -dx2, 0, (float) dz2);
         }
         if (Keyboard.get().isKeyDown(GLFW_KEY_D)) {
             cameraPosition.z -= dz2;
             cameraPosition.x += dx2;
             gunPosition.z -= dz2;
             gunPosition.x += dx2;
+            boundingBox.increasePosition((float) dx2, 0, (float) -dz2);
         }
         if (Mouse.get().isButtonPressed(GLFW_MOUSE_BUTTON_1)) {
             this.pew.play();
         }
 
-        this.gun.setPosition(gunPosition);
-        this.camera.setPosition(cameraPosition);
+        if (!playerCollides(entities)) {
+            this.gun.setPosition(gunPosition);
+            this.camera.setPosition(cameraPosition);
+        }
+        else {
+            this.boundingBox = oldBoundingBox;
+        }
     }
 
     public void loadTo(StaticShader shader) {
@@ -113,5 +130,13 @@ public class Player {
 
     public void render(StaticShader shader) {
         this.gun.render(shader);
+    }
+
+    public boolean playerCollides(ArrayList<Entity> entities) {
+        for (Entity entity : entities) {
+            if (boundingBox.collides(entity.getBoundingBox()))
+                return true;
+        }
+        return false;
     }
 }
